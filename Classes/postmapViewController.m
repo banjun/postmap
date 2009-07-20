@@ -9,6 +9,7 @@
 #import "postmapViewController.h"
 #import "PostAnnotation.h"
 #import "ProgressiveOperation.h"
+#import <CoreLocation/CoreLocation.h>
 
 @interface postmapViewController ()
 
@@ -44,7 +45,25 @@
     [super viewDidLoad];
     
     mapView.showsUserLocation = YES;
-    [self readDefaults];    
+    [self readDefaults];
+    
+    locationManager = [[CLLocationManager alloc] init];
+    locationManager.delegate = self;
+    locationManager.desiredAccuracy = 100.0;
+    NSLog(@"headingAvailable = %d", locationManager.headingAvailable);
+    [locationManager startUpdatingLocation];
+    if (locationManager.headingAvailable) {
+        mapView.contentMode = UIViewContentModeCenter;
+        CGRect frame = mapView.frame;
+        CGPoint center = mapView.center;
+        frame.size.width = sqrt(pow(frame.size.width, 2) + pow(frame.size.height, 2));
+        frame.size.height = frame.size.width;
+        mapView.frame = frame;
+        mapView.center = center;
+        
+        locationManager.headingFilter = 2.0;
+        [locationManager startUpdatingHeading];
+    }
 }
 
 - (IBAction)gotoCurrentLocation:(id)sender
@@ -56,6 +75,10 @@
         [mapView setRegion:MKCoordinateRegionMake(mapView.userLocation.coordinate, span) animated:YES];
     } else {
         [mapView setCenterCoordinate:mapView.userLocation.coordinate animated:YES];
+    }
+    
+    if (locationManager.headingAvailable) {
+        [locationManager performSelector:@selector(startUpdatingHeading) withObject:nil afterDelay:0.1];
     }
 }
 
@@ -87,6 +110,9 @@
 
 
 - (void)dealloc {
+    [locationManager stopUpdatingLocation];
+    [locationManager stopUpdatingHeading];
+    [locationManager release], locationManager = nil;
     [super dealloc];
 }
 
@@ -174,7 +200,14 @@
 #pragma mark MKMapView Delegate
 
 - (void)mapView:(MKMapView *)theMapView regionDidChangeAnimated:(BOOL)animated
-{  
+{
+    if (!animated) {
+        [UIView beginAnimations:@"mapViewRotateAnimation" context:nil];
+        mapView.transform = CGAffineTransformIdentity;
+        [UIView commitAnimations];
+        [locationManager stopUpdatingHeading];
+    }
+    
     static CLLocationDegrees kZoomedSpan = 0.050;
     if (mapView.region.span.latitudeDelta > kZoomedSpan) return;
     
@@ -196,5 +229,33 @@
     view.animatesDrop = YES;
     return view;
 }
+
+#pragma mark -
+#pragma mark CLLocationManager Delegate
+
+- (void)locationManager:(CLLocationManager *)manager
+	didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation
+{    
+    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(newLocation.coordinate,
+                                                                   newLocation.horizontalAccuracy,
+                                                                   newLocation.horizontalAccuracy);
+    static CLLocationDegrees kZoomedSpan = 0.005;
+    if (region.span.latitudeDelta < kZoomedSpan) {
+        region.span = MKCoordinateSpanMake(kZoomedSpan, kZoomedSpan);
+    }
+    [mapView setRegion:region animated:YES];
+    [mapView setCenterCoordinate:newLocation.coordinate animated:YES];
+    
+    [locationManager stopUpdatingLocation];
+}
+- (void)locationManager:(CLLocationManager *)manager
+       didUpdateHeading:(CLHeading *)newHeading
+{
+    [UIView beginAnimations:@"mapViewRotateAnimation" context:nil];
+    mapView.transform = CGAffineTransformMakeRotation(- newHeading.trueHeading * M_PI / 180.0);    
+    [UIView commitAnimations];
+}
+
 
 @end

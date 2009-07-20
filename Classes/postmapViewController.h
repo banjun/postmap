@@ -11,8 +11,9 @@
 
 @class PostAnnotation;
 
-@interface postmapViewController : UIViewController {
+@interface postmapViewController : UIViewController <CLLocationManagerDelegate> {
     IBOutlet MKMapView *mapView;
+    CLLocationManager *locationManager;
     
     NSOperationQueue *requestQueue;
     
