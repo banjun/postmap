@@ -21,6 +21,7 @@
 		BF0BF3270FF740B90030F842 /* ProgressiveOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0BF3260FF740B90030F842 /* ProgressiveOperation.m */; };
 		BF58CA5110144E9C00DBC57C /* PostDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF58CA5010144E9C00DBC57C /* PostDetailViewController.m */; };
 		BF58CA5510144EAE00DBC57C /* PostDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF58CA5410144EAE00DBC57C /* PostDetailViewController.xib */; };
+		BF58CC5910148E4F00DBC57C /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BF58CC5810148E4F00DBC57C /* Default.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		BF58CA4F10144E9C00DBC57C /* PostDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostDetailViewController.h; sourceTree = "<group>"; };
 		BF58CA5010144E9C00DBC57C /* PostDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostDetailViewController.m; sourceTree = "<group>"; };
 		BF58CA5410144EAE00DBC57C /* PostDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PostDetailViewController.xib; path = Classes/PostDetailViewController.xib; sourceTree = "<group>"; };
+		BF58CC5810148E4F00DBC57C /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +115,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BF58CC5810148E4F00DBC57C /* Default.png */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				2899E5210DE3E06400AC0155 /* postmapViewController.xib */,
 				BF58CA5410144EAE00DBC57C /* PostDetailViewController.xib */,
@@ -178,6 +181,7 @@
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* postmapViewController.xib in Resources */,
 				BF58CA5510144EAE00DBC57C /* PostDetailViewController.xib in Resources */,
+				BF58CC5910148E4F00DBC57C /* Default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
