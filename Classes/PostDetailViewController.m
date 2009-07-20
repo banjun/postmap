@@ -161,7 +161,8 @@ enum {
 {
 //    NSLog(@"foundCharacters: %@, parsingKind = %d", string, parsingKind);
     if (parsingKind == kParsingKindPostName) {
-        postNameLabel.text = [postNameLabel.text stringByAppendingString:string];
+        NSString *text = [postNameLabel.text stringByAppendingString:string];
+        [postNameLabel performSelectorOnMainThread:@selector(setText:) withObject:text waitUntilDone:YES];
     }
     
     if (parsingKind == kParsingKindTimesGatheredName) {

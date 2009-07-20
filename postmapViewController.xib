@@ -38,12 +38,12 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBMKMapView" id="838391890">
 						<reference key="NSNextResponder" ref="774585933"/>
-						<int key="NSvFlags">301</int>
+						<int key="NSvFlags">293</int>
 						<string key="NSFrameSize">{320, 416}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
-						<int key="IBUIContentMode">4</int>
+						<int key="IBUIContentMode">5</int>
 						<bool key="IBUIMultipleTouchEnabled">YES</bool>
 					</object>
 					<object class="IBUIToolbar" id="21108479">

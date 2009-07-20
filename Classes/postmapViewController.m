@@ -48,6 +48,7 @@
     self.title = @"Map";
     
     mapView.showsUserLocation = YES;
+    mapViewFrame = mapView.frame;
     [self readDefaults];
     
     locationManager = [[CLLocationManager alloc] init];
@@ -57,7 +58,6 @@
     [locationManager startUpdatingLocation];
     if (locationManager.headingAvailable) {
         mapView.contentMode = UIViewContentModeCenter;
-        mapViewFrame = mapView.frame;
         mapViewFrame.size.width = sqrt(pow(mapViewFrame.size.width, 2) + pow(mapViewFrame.size.height, 2));
         mapViewFrame.size.height = mapViewFrame.size.width;
         
@@ -74,10 +74,12 @@
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     
 //    CGAffineTransform transform = mapView.transform;
-    mapView.transform = CGAffineTransformIdentity;
-    CGPoint center = mapView.center;
-    mapView.frame = mapViewFrame; 
-    mapView.center = center;
+    if (locationManager.headingAvailable) {
+        mapView.transform = CGAffineTransformIdentity;
+        CGPoint center = mapView.center;
+        mapView.frame = mapViewFrame; 
+        mapView.center = center;
+    }
 //    mapView.transform = transform;
 }    
 
