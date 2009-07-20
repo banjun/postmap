@@ -14,6 +14,7 @@
 @synthesize coordinate;
 @synthesize title, subtitle;
 @synthesize postID;
+@synthesize iconString;
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)theCoordinate
 {
@@ -22,4 +23,12 @@
     }
     return self;
 }
+- (void)dealloc
+{
+    self.title = self.subtitle = nil;
+    self.postID = nil;
+    self.iconString = nil;
+    [super dealloc];
+}
+
 @end

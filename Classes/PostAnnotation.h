@@ -17,6 +17,7 @@
     NSString *subtitle;
     
     NSString *postID;
+    NSString *iconString;
 }
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
@@ -25,5 +26,6 @@
 @property (retain) NSString *subtitle;
 
 @property (retain) NSString *postID;
+@property (retain) NSString *iconString;
 
 @end

@@ -12,11 +12,11 @@
 
 @interface postmapAppDelegate : NSObject <UIApplicationDelegate> {
     UIWindow *window;
-    postmapViewController *viewController;
+    IBOutlet UINavigationController *viewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet postmapViewController *viewController;
+@property (nonatomic, retain) IBOutlet UINavigationController *viewController;
 
 @end
 

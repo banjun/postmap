@@ -13,6 +13,7 @@
 
 @interface postmapViewController : UIViewController <CLLocationManagerDelegate> {
     IBOutlet MKMapView *mapView;
+    CGRect mapViewFrame;
     CLLocationManager *locationManager;
     
     NSOperationQueue *requestQueue;

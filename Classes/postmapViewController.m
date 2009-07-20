@@ -8,6 +8,7 @@
 
 #import "postmapViewController.h"
 #import "PostAnnotation.h"
+#import "PostDetailViewController.h"
 #import "ProgressiveOperation.h"
 #import <CoreLocation/CoreLocation.h>
 
@@ -44,6 +45,8 @@
     
     [super viewDidLoad];
     
+    self.title = @"Map";
+    
     mapView.showsUserLocation = YES;
     [self readDefaults];
     
@@ -54,17 +57,29 @@
     [locationManager startUpdatingLocation];
     if (locationManager.headingAvailable) {
         mapView.contentMode = UIViewContentModeCenter;
-        CGRect frame = mapView.frame;
+        mapViewFrame = mapView.frame;
+        mapViewFrame.size.width = sqrt(pow(mapViewFrame.size.width, 2) + pow(mapViewFrame.size.height, 2));
+        mapViewFrame.size.height = mapViewFrame.size.width;
+        
         CGPoint center = mapView.center;
-        frame.size.width = sqrt(pow(frame.size.width, 2) + pow(frame.size.height, 2));
-        frame.size.height = frame.size.width;
-        mapView.frame = frame;
+        mapView.frame = mapViewFrame;
         mapView.center = center;
         
         locationManager.headingFilter = 2.0;
         [locationManager startUpdatingHeading];
     }
 }
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    
+//    CGAffineTransform transform = mapView.transform;
+    mapView.transform = CGAffineTransformIdentity;
+    CGPoint center = mapView.center;
+    mapView.frame = mapViewFrame; 
+    mapView.center = center;
+//    mapView.transform = transform;
+}    
 
 - (IBAction)gotoCurrentLocation:(id)sender
 {
@@ -180,8 +195,9 @@
     center.longitude = [[attributeDict objectForKey:@"lng"] doubleValue];
     
     PostAnnotation *post = [[[PostAnnotation alloc] initWithCoordinate:center] autorelease];
-    post.title = [attributeDict objectForKey:@"icon"];
+    post.title = @"Info";
     post.postID = postID;
+    post.iconString = [attributeDict objectForKey:@"icon"];
     
     if ([mapView.annotations count] > 255) {
         id firstPost = nil;
@@ -217,18 +233,40 @@
     
     [self saveDefaults];
 }
+MKPinAnnotationColor pinColorFromIconString(NSString *iconString)
+{
+    if ([iconString isEqualToString:@"green"]) return MKPinAnnotationColorGreen;
+    if ([iconString isEqualToString:@"jp"]) return MKPinAnnotationColorPurple;
+    if ([iconString isEqualToString:@"jp_red"]) return MKPinAnnotationColorPurple;
+    return MKPinAnnotationColorRed;
+}
 - (MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id <MKAnnotation>)annotation
 {
     if (![annotation isKindOfClass:[PostAnnotation class]]) return nil;
+    PostAnnotation *post = (PostAnnotation *)annotation;
     
     MKPinAnnotationView *view = (MKPinAnnotationView *)[theMapView dequeueReusableAnnotationViewWithIdentifier:@"post"];
     if (!view) {
         view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"post"] autorelease];
     }
-    view.annotation = annotation;
+    view.annotation = post;
+    view.canShowCallout = YES;
     view.animatesDrop = YES;
+    view.pinColor = pinColorFromIconString(post.iconString);
+    if (!view.rightCalloutAccessoryView) {
+        view.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+    }
+    
     return view;
 }
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
+{
+    PostDetailViewController *vc = [[PostDetailViewController alloc] initWithNibName:@"PostDetailViewController" bundle:nil];
+    vc.post = view.annotation;
+    [self.navigationController pushViewController:vc animated:YES];
+    [vc release];
+}
+
 
 #pragma mark -
 #pragma mark CLLocationManager Delegate
@@ -238,8 +276,8 @@
            fromLocation:(CLLocation *)oldLocation
 {    
     MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(newLocation.coordinate,
-                                                                   newLocation.horizontalAccuracy,
-                                                                   newLocation.horizontalAccuracy);
+                                                                   2*newLocation.horizontalAccuracy,
+                                                                   2*newLocation.horizontalAccuracy);
     static CLLocationDegrees kZoomedSpan = 0.005;
     if (region.span.latitudeDelta < kZoomedSpan) {
         region.span = MKCoordinateSpanMake(kZoomedSpan, kZoomedSpan);
